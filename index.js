@@ -1,32 +1,25 @@
-const http = require("http");
-const url = require("url");
-const fs = require("fs");
+const path = require("path");
+const express = require("express");
+const app = express();
 
-const readFile = (pathName, res) => {
-    fs.readFile(pathName, (err, data) => {
-        if (err) throw err
-        res.writeHead(200, { "content-type": "text/html" });
-        res.write(data);
-        return res.end();
-    }
-    )
-};
 
-http.createServer((req, res) => {
-    const q = url.parse(req.url, true);
-    const pathName = q.pathname;
-    switch (pathName) {
-        case "/":
-            readFile("./index.html", res);
-            break;
-        case "/about":
-            readFile("./about.html", res);
-            break;
-        case "/contact-me":
-            readFile("./contact-me.html", res);
-            break;
-        default:
-            readFile("./404.html", res);
-            break;
-    }
-}).listen(8080)
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname+"/index.html") );
+})
+
+app.get("/about", (req, res) => {
+    res.sendFile(path.join(__dirname+"/about.html"));
+})
+
+app.get("/contact-me", (req, res) => {
+    res.sendFile(path.join(__dirname+"/contact-me.html"));
+})
+
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname+"/404.html"));
+})
+
+const PORT = 3000;
+app.listen(PORT, () => {
+    console.log(`My first Express app - listening on port ${PORT}!`);
+})
